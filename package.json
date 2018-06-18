@@ -1,0 +1,17 @@
+{
+  "name": "hitomi-chan-kakao-bot",
+  "version": "1.0.0",
+  "description": "A simple Kakao bot using hitomi-chan backend server",
+  "main": "index.js",
+  "author": "ReisenMoe",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "export DEV_MODE=true, node index.js"
+  }
+}
