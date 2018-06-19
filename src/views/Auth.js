@@ -1,6 +1,5 @@
-const { Message, Keyboard } = require("../responses");
-const { UserAuth, UserState } = require("../controllers");
-const viewTypes = require("./viewTypes");
+const { parse } = require("./commandParser");
+const { HelpAction, AuthAction, UnknownAction } = require("../actions");
 
 /**
  * Evaluates message and executes callback with a Message object.
@@ -9,45 +8,23 @@ const viewTypes = require("./viewTypes");
  * @param {(data: Object) => void} callback
  */
 function handleMessage(userKey, content, callback) {
-    let words = content.split(" ");
+    let cmd = parse(content);
 
-    switch(words[0]) {
-    case "help":
-        handleHelp(callback);
+    switch(cmd.command) {
+    case HelpAction.getCommand():
+        HelpAction.doAction(null, [
+            HelpAction.getHelpMessage(),
+            AuthAction.getHelpMessage()
+        ], callback);
         break;
-    case "auth":
-        handleAuth(userKey, words[1], callback);
+    case AuthAction.getCommand():
+        AuthAction.doAction(userKey, cmd.params, callback);
         break;
     default:
-        handleUnknown(words[0], callback);
+        UnknownAction.doAction(null, cmd.command, callback);
         break;
     }
 }
-
-function handleUnknown(command, callback) {
-    callback(Message.createText(`Unknown command: ${command}`));
-}
-
-function handleHelp(callback) {
-    callback(Message.createText(`
-"help"
-Displays this message.
-
-"auth {credential}"
-Authenticates current user with specified credential value.
-    `));
-}
-
-function handleAuth(userKey, credential, callback) {
-    if(UserAuth.authenticate(userKey, credential)) {
-        UserState.setViewType(userKey, viewTypes.home);
-        callback(Message.createText("You are now authenticated! :D"));
-        return;
-    }
-    callback(Message.createText("Failed to authenticate."));
-}
-
-
 
 module.exports = {
     handleMessage

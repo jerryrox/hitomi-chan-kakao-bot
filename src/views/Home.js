@@ -1,8 +1,5 @@
-const { Keyboard, Message } = require("../responses");
-const { UserAuth, UserState } = require("../controllers");
-const viewTypes = require("./viewTypes");
-const axios = require("axios");
-const constants = require("../constants");
+const { parse } = require("./commandParser");
+const { HelpAction, LogoutAction, LatestAction, DetailAction, SearchAction, ViewAction, UnknownAction } = require("../actions");
 
 /**
  * Evaluates message and executes callback with a Message object.
@@ -11,77 +8,38 @@ const constants = require("../constants");
  * @param {(data: Object) => void} callback
  */
 function handleMessage(userKey, content, callback) {
-    let words = content.split(" ");
+    let cmd = parse(content);
 
-    switch(words[0].toLowerCase()) {
-    case "help":
-        handleHelp(callback);
+    switch(cmd.command) {
+    case HelpAction.getCommand():
+        HelpAction.doAction(null, [
+            HelpAction.getHelpMessage(),
+            LogoutAction.getHelpMessage(),
+            LatestAction.getHelpMessage(),
+            DetailAction.getHelpMessage(userKey),
+            SearchAction.getHelpMessage(),
+            ViewAction.getHelpMessage()
+        ], callback);
         break;
-    case "logout":
-        handleLogout(userKey, callback);
+    case LogoutAction.getCommand():
+        LogoutAction.doAction(userKey, null, callback);
         break;
-    case "latest":
-        handleLatest(callback);
+    case LatestAction.getCommand():
+        LatestAction.doAction(null, cmd.params, callback);
         break;
-    case "search":
-        handleSearch(userKey, callback);
+    case DetailAction.getCommand():
+        DetailAction.doAction(userKey, cmd.params, callback);
         break;
-    case "view":
-        handleView(userKey, words[1], callback);
+    case SearchAction.getCommand():
+        SearchAction.doAction(userKey, null, callback);
+        break;
+    case ViewAction.getCommand():
+        ViewAction.doAction(userKey, cmd.params, callback);
         break;
     default:
-        handleUnknown(words[0], callback);
+        UnknownAction.doAction(null, [cmd.command], callback);
         break;
     }
-}
-
-function handleUnknown(command, callback) {
-    callback(Message.createText(`Unknown command: ${command}`));
-}
-
-function handleHelp(callback) {
-    callback(Message.createText(`
-"help"
-Displays this message.
-
-"logout"
-Unauthenticates current session.
-
-"latest"
-Returns the latest 15 galleries.
-
-"search"
-Displays search interface.
-
-"view {id}"
-Displays gallery interface with specified gallery id.
-    `));
-}
-
-function handleLogout(userKey, callback) {
-    UserAuth.removeAuth(userKey);
-    callback(Message.createText("Successfully logged out."));
-}
-
-function handleLatest(callback) {
-    axios.get(constants.HITOMI_CHAN_GALLERY)
-        .then(res => {
-            callback(Message.createText(JSON.stringify(res.data.data)));
-        })
-        .catch(err => {
-            callback(Message.createText("Failed to fetch latest galleries."));
-        });
-}
-
-function handleSearch(userKey, callback) {
-    UserState.setViewType(userKey, viewTypes.search);
-    callback(Message.createText("Viewing Search."));
-}
-
-function handleView(userKey, id, callback) {
-    UserState.setCurGallery(userKey, id);
-    UserState.setViewType(userKey, viewTypes.gallery);
-    callback(Message.createText(`Viewing Gallery ${id}`));
 }
 
 module.exports = {

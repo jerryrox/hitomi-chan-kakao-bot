@@ -10,9 +10,9 @@ function getViewType(userKey) {
 }
 
 /**
- * Returns the current gallery id viewing.
+ * Returns the current gallery object viewing.
  * @param {string} userKey
- * @returns {number}
+ * @returns {Object}
  */
 function getCurGallery(userKey) {
     return UserSession.getUser(userKey).curGallery;
@@ -30,10 +30,10 @@ function setViewType(userKey, viewType) {
 /**
  * Sets a user's current gallery.
  * @param {string} userKey 
- * @param {string} galleryId 
+ * @param {Object} gallery
  */
-function setCurGallery(userKey, galleryId) {
-    UserSession.getUser(userKey).setCurGallery(Number(galleryId));
+function setCurGallery(userKey, gallery) {
+    UserSession.getUser(userKey).setCurGallery(gallery);
 }
 
 module.exports = {

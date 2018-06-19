@@ -11,6 +11,7 @@ class UserSession {
 
         this.isAnonymous = this.isAnonymous.bind(this);
         this.setViewType = this.setViewType.bind(this);
+        this.curGallery = {};
     }
 
     isAnonymous() {
@@ -22,6 +23,12 @@ class UserSession {
             return;
         this.viewType = viewType;
     };
+
+    setCurGallery(gallery) {
+        if(this.isAnonymous())
+            return;
+        this.curGallery = gallery;
+    }
 }
 
 // Users

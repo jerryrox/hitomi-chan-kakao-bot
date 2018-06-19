@@ -20,7 +20,19 @@ function logError(method, route, err) {
     console.log(`${method} ${route} - Error: ${JSON.stringify(err)}`);
 }
 
+/**
+ * Reduces an array of string separated by ", ".
+ * @param {Array<string>} strings
+ * @returns {string}
+ */
+function listStrings(strings) {
+    if(typeof(strings) === "string")
+        return strings;
+    return strings.reduce((a, b) => `${a}, ${b}`);
+}
+
 module.exports = {
     applyRoot,
-    logError
+    logError,
+    listStrings
 };
