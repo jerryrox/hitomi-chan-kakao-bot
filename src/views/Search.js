@@ -1,6 +1,5 @@
-const { Message, Keyboard } = require("../responses");
-const { UserAuth, UserState } = require("../controllers");
-const viewTypes = require("./viewTypes");
+const commandParser = require("./commandParser");
+const { HelpAction, LatestAction, QueryAction, ViewAction, DetailAction, HomeAction, LogoutAction, UnknownAction } = require("../actions");
 
 /**
  * Evaluates message and executes callback with a Message object.
@@ -9,27 +8,42 @@ const viewTypes = require("./viewTypes");
  * @param {(data: Object) => void} callback
  */
 function handleMessage(userKey, content, callback) {
-    let words = content.split(" ");
-
-    switch(words[0]) {
-    case "help":
-        handleHelp(callback);
+    let cmd = commandParser.parse(content);
+    
+    switch(cmd.command) {
+    case HelpAction.getCommand():
+        HelpAction.doAction(null, [
+            HelpAction.getHelpMessage(),
+            LatestAction.getHelpMessage(),
+            QueryAction.getHelpMessage(),
+            ViewAction.getHelpMessage(),
+            DetailAction.getHelpMessage(userKey),
+            HomeAction.getHelpMessage(),
+            LogoutAction.getHelpMessage()
+        ], callback);
+        break;
+    case LatestAction.getCommand():
+        LatestAction.doAction(null, cmd.params, callback);
+        break;
+    case QueryAction.getCommand():
+        QueryAction.doAction(null, cmd.params, callback);
+        break;
+    case ViewAction.getCommand():
+        ViewAction.doAction(userKey, cmd.params, callback);
+        break;
+    case DetailAction.getCommand():
+        DetailAction.doAction(userKey, cmd.params, callback);
+        break;
+    case HomeAction.getCommand():
+        HomeAction.doAction(userKey, null, callback);
+        break;
+    case LogoutAction.getCommand():
+        LogoutAction.doAction(userKey, null, callback);
         break;
     default:
-        handleUnknown(words[0], callback);
+        UnknownAction.doAction(null, [cmd.command], callback);
         break;
     }
-}
-
-function handleUnknown(command, callback) {
-    callback(Message.createText(`Unknown command: ${command}`));
-}
-
-function handleHelp(callback) {
-    callback(Message.createText(`
-"help"
-Displays this message.
-    `));
 }
 
 module.exports = {

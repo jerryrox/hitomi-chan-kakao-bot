@@ -1,5 +1,5 @@
 const commandParser = require("./commandParser");
-const { HelpAction, ReadAction, OriginalAction, DetailAction, HomeAction, UnknownAction } = require("../actions");
+const { HelpAction, ReadAction, OriginalAction, DetailAction, SearchAction, HomeAction, LogoutAction, UnknownAction } = require("../actions");
 
 /**
  * Evaluates message and executes callback with a Message object.
@@ -17,7 +17,9 @@ function handleMessage(userKey, content, callback) {
             ReadAction.getHelpMessage(),
             OriginalAction.getHelpMessage(),
             DetailAction.getHelpMessage(userKey),
-            HomeAction.getHelpMessage()
+            SearchAction.getHelpMessage(),
+            HomeAction.getHelpMessage(),
+            LogoutAction.getHelpMessage(),
         ], callback);
         break;
     case ReadAction.getCommand():
@@ -29,8 +31,14 @@ function handleMessage(userKey, content, callback) {
     case DetailAction.getCommand():
         DetailAction.doAction(userKey, cmd.params, callback);
         break;
+    case SearchAction.getCommand():
+        SearchAction.doAction(userKey, null, callback);
+        break;
     case HomeAction.getCommand():
         HomeAction.doAction(userKey, null, callback);
+        break;
+    case LogoutAction.getCommand():
+        LogoutAction.doAction(userKey, null, callback);
         break;
     default:
         UnknownAction.doAction(null, [cmd.command], callback);
