@@ -42,14 +42,12 @@ function createMessageButton(label, url, includeRoot = false) {
  * @param {Object} photo
  * @param {Object} messageButton
  */
-function createMessage(text, photo, messageButton) {
-    return {
-        message: {
-            text,
-            photo,
-            message_button: messageButton
-        }
-    };
+function createMessage(text, photo, messageButton, includeRoot = false) {
+    return applyRoot("message", includeRoot, {
+        text,
+        photo,
+        message_button: messageButton
+    });
 }
 
 module.exports = {
