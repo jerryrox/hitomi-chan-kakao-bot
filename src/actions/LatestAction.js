@@ -37,7 +37,7 @@ function doAction(userKey, params, callback) {
     let count = 10;
     if(params.length > 0) {
         let parsedCount = parseInt(params[0]);
-        if(parsedCount !== NaN)
+        if(!isNaN(parsedCount))
             count = parsedCount;
     }
     
