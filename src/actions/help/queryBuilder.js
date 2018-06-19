@@ -26,7 +26,7 @@ function buildQuery(params) {
         params[key] = String(params[key]);
 
         let entries = params[key].split(",");
-        let encodedEntries = entries.map(entry => encodeURIComponent(entry))
+        let encodedEntries = entries.map(entry => encodeURIComponent(entry));
         let paramString = encodedEntries.reduce((a, b) => {
             return `${a},${b}`;
         });
