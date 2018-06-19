@@ -2,7 +2,9 @@ const { Message } = require("../responses");
 const { UserAuth, UserState } = require("../controllers");
 const viewTypes = require("../views/viewTypes");
 const galleryFormatter = require("./help/galleryFormatter");
-const { HITOMI_CHAN_READ, HITOMI_CHAN_THUMB_BIG_META, HITOMI_CHAN_THUMB_BIG } = require("../constants");
+const { HITOMI_CHAN_READ, HITOMI_CHAN_THUMB_BIG } = require("../constants");
+
+const probe = require("probe-image-size");
 
 /**
  * Returns the command which triggers this action.
@@ -35,23 +37,24 @@ function getHelpMessage() {
  */
 function doAction(userKey, params, callback) {
     let gallery = UserState.getCurGallery(userKey);
-    let thumbMetaUrl = HITOMI_CHAN_THUMB_BIG_META + gallery.id;
+    let thumbUrl = HITOMI_CHAN_THUMB_BIG + gallery.id;
+    let readUrl = HITOMI_CHAN_READ + gallery.id;
 
-    axios.get(thumbMetaUrl)
-        .then(res => {
-            const { width, height } = res.data;
-            let thumbUrl = HITOMI_CHAN_THUMB_BIG + gallery.id;
-            let readUrl = HITOMI_CHAN_READ + gallery.id;
+    probe(thumbUrl, (err, result) => {
+        if(err) {
+            callback(Message.createText("Failed to fetch thumbnail info."));
+            return;
+        }
 
-            Message.createMessage({
-                ...Message.createText(galleryFormatter.formatReadLink(gallery)),
-                ...Message.createPhoto(thumbUrl, width, height),
-                ...Message.createMessageButton("Read online", readUrl)
-            });
-        })
-        .catch(err => {
-            callback(Message.createText(`Thumbnail metadata was not found for id: ${gallery.id}.`));
-        });
+        let width = result.width;
+        let height = result.height;
+        let message = Message.createMessage(
+            galleryFormatter.formatReadLink(gallery),
+            Message.createPhoto(thumbUrl, width, height),
+            Message.createMessageButton("Read online", readUrl)
+        );
+        callback(message);
+    });
 }
 
 module.exports = {
