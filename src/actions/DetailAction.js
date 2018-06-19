@@ -43,7 +43,6 @@ function doAction(userKey, params, callback) {
     if(params.length === 0) {
         // If viewing gallery view, display details of curent gallery.
         if(UserState.getViewType(userKey) === viewTypes.gallery) {
-            console.log(UserState.getCurGallery(userKey))
             callbackDetail(callback, UserState.getCurGallery(userKey));
             return;
         }

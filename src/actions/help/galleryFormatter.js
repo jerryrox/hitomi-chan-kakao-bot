@@ -45,12 +45,12 @@ function formatDetail(gallery) {
     if(gallery.n) detail += `"${gallery.n}"\n\n`;
     detail += `Id: ${gallery.id}\n\n`;
     if(gallery.type) detail += `Type: ${gallery.type}\n\n`;
-    if(gallery.a) detail += `Authors: ${listStrings(gallery.a)}\n\n`;
     if(gallery.l) detail += `Language: ${gallery.l}\n\n`;
-    if(gallery.p) detail += `Series: ${listStrings(gallery.p)}\n\n`;
-    if(gallery.c) detail += `Characters: ${listStrings(gallery.c)}\n\n`;
-    if(gallery.g) detail += `Group: ${listStrings(gallery.g)}\n\n`;
-    if(gallery.t) detail += `Tags: ${listStrings(gallery.t)}`;
+    if(gallery.a && gallery.a.length > 0) detail += `Authors: ${listStrings(gallery.a)}\n\n`;
+    if(gallery.p && gallery.p.length > 0) detail += `Series: ${listStrings(gallery.p)}\n\n`;
+    if(gallery.c && gallery.c.length > 0) detail += `Characters: ${listStrings(gallery.c)}\n\n`;
+    if(gallery.g && gallery.g.length > 0) detail += `Group: ${listStrings(gallery.g)}\n\n`;
+    if(gallery.t && gallery.t.length > 0) detail += `Tags: ${listStrings(gallery.t)}`;
 
     return detail;
 }
