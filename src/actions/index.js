@@ -8,6 +8,7 @@ const ReadAction = require("./ReadAction");
 const OriginalAction = require("./OriginalAction");
 const DetailAction = require("./DetailAction");
 const HomeAction = require("./HomeAction");
+const QueryAction = require("./QueryAction");
 const UnknownAction = require("./UnknownAction");
 
 module.exports = {
@@ -21,5 +22,6 @@ module.exports = {
     OriginalAction,
     DetailAction,
     HomeAction,
+    QueryAction,
     UnknownAction
 };
