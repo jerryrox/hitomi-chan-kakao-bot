@@ -1,8 +1,7 @@
 const { Message } = require("../responses");
 const { UserState } = require("../controllers");
-const viewTypes = require("../views/viewTypes");
 const axios = require("axios");
-const { HITOMI_CHAN_ORIGINAL } = require("../constants");
+const { API_ORIGINAL } = require("../urls");
 
 /**
  * Returns the command which triggers this action.
@@ -35,11 +34,11 @@ function getHelpMessage() {
  */
 function doAction(userKey, params, callback) {
     let gallery = UserState.getCurGallery(userKey);
-    let originalUrl = HITOMI_CHAN_ORIGINAL + gallery.id;
+    let originalUrl = API_ORIGINAL + gallery.id;
 
     axios.get(originalUrl)
         .then(res => {
-            callback(Message.createText(res.data.link));
+            callback(Message.createText(res.data.data));
         })
         .catch(err => {
             callback(Message.createText(`Original hitomi link not found for id: ${gallery.id}`));

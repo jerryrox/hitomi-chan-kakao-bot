@@ -1,6 +1,6 @@
 const { Message } = require("../responses");
 const axios = require("axios");
-const constants = require("../constants");
+const urls = require("../urls");
 const galleryFormatter = require("./help/galleryFormatter");
 const queryBuilder = require("./help/queryBuilder");
 
@@ -42,7 +42,7 @@ function doAction(userKey, params, callback) {
     }
     
     let query = queryBuilder.buildQuery({count});
-    axios.get(constants.HITOMI_CHAN_GALLERY + query)
+    axios.get(urls.API_GALLERY + query)
         .then(res => {
             callback(Message.createText(
                 galleryFormatter.formatSimple(res.data.data)

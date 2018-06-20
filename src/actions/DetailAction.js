@@ -4,8 +4,8 @@ const viewTypes = require("../views/viewTypes");
 const axios = require("axios");
 const galleryFormatter = require("./help/galleryFormatter");
 const queryBuilder = require("./help/queryBuilder");
-const { HITOMI_CHAN_GALLERY } = require("../constants");
-const { isValidGallerySingle } = require("./help/responseValidator");
+const { API_GALLERY } = require("../urls");
+const { isValidGallery } = require("./help/responseValidator");
 
 /**
  * Returns the command which triggers this action.
@@ -55,14 +55,16 @@ function doAction(userKey, params, callback) {
     let query = queryBuilder.buildQuery({
         id: params[0]
     });
-    let detailUrl = HITOMI_CHAN_GALLERY + query;
+    let detailUrl = API_GALLERY + query;
     
     axios.get(detailUrl)
         .then(res => {
-            if(!isValidGallerySingle(res.data.data))
+            if(!isValidGallery(res.data.data))
                 throw Error("No gallery exists!");
 
-            callbackDetail(callback, res.data.data);
+            let galleryData = res.data.data[0];
+
+            callbackDetail(callback, galleryData);
         })
         .catch(err => {
             callback(Message.createText(`Could not find gallery details with id: ${params[0]}`));

@@ -13,6 +13,6 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "export DEV_MODE=true, node index.js"
+    "dev": "export DEV_MODE=true && nodemon index.js"
   }
 }

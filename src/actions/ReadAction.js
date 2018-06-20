@@ -1,8 +1,8 @@
 const { Message } = require("../responses");
-const { UserAuth, UserState } = require("../controllers");
-const viewTypes = require("../views/viewTypes");
+const { UserState } = require("../controllers");
 const galleryFormatter = require("./help/galleryFormatter");
-const { HITOMI_CHAN_READ, HITOMI_CHAN_THUMB_BIG } = require("../constants");
+const { API_THUMB_BIG, VIEW_READ, VIEW_WATCH } = require("../urls");
+const { isAnimeType } = require("../utils");
 
 const probe = require("probe-image-size");
 
@@ -37,21 +37,34 @@ function getHelpMessage() {
  */
 function doAction(userKey, params, callback) {
     let gallery = UserState.getCurGallery(userKey);
-    let thumbUrl = HITOMI_CHAN_THUMB_BIG + gallery.id;
-    let readUrl = HITOMI_CHAN_READ + gallery.id;
+    let thumbUrl = API_THUMB_BIG + gallery.id + "/03.png";
 
     probe(thumbUrl, (err, result) => {
         if(err) {
+            console.log(err)
             callback(Message.createText("Failed to fetch thumbnail info."));
             return;
         }
 
+        // Setup metadata
+        let targetUrl;
+        let buttonText;
+        if(isAnimeType(gallery)) {
+            targetUrl = VIEW_WATCH + gallery.id;
+            buttonText = "Watch online";
+        }
+        else {
+            targetUrl = VIEW_READ + gallery.id;
+            buttonText = "Read online";
+        }
+
+        // Return message
         let width = result.width;
         let height = result.height;
         let message = Message.createMessage(
             galleryFormatter.formatReadLink(gallery),
             Message.createPhoto(thumbUrl, width, height),
-            Message.createMessageButton("Read online", readUrl)
+            Message.createMessageButton(buttonText, targetUrl)
         );
         callback(message);
     });

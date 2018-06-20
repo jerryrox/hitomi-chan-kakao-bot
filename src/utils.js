@@ -31,8 +31,16 @@ function listStrings(strings) {
     return strings.reduce((a, b) => `${a}, ${b}`);
 }
 
+/**
+ * Returns whether specified gallery's type is "anime".
+ */
+function isAnimeType(gallery) {
+    return gallery.type === "anime";
+}
+
 module.exports = {
     applyRoot,
     logError,
-    listStrings
+    listStrings,
+    isAnimeType
 };
