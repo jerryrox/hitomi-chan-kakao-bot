@@ -37,7 +37,8 @@ function getHelpMessage() {
  */
 function doAction(userKey, params, callback) {
     let gallery = UserState.getCurGallery(userKey);
-    let thumbUrl = API_THUMB_BIG + gallery.id + "/03.png";
+    let thumbUrl = API_THUMB_BIG + gallery.id;
+
 
     probe(thumbUrl, (err, result) => {
         if(err) {
